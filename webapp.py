@@ -40,11 +40,12 @@ app =  Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    temp=None
+    time=clock()
+    date=calender()
     if request.method == 'POST':
         city = request.form['city']
-        temp=wthr(city)
-        time=clock()
-        date=calender()
+        temp=wthr(city)       
     return render_template('index.html', temp=temp, time=time, date=date)
 
 @app.route("/abc")
