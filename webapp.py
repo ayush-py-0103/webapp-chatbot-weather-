@@ -2,8 +2,6 @@ from flask import Flask, render_template, request
 import requests
 from datetime import datetime
 
-
-
 def clock():
     current = datetime.now()
     hr= int(current.strftime("%H"))
