@@ -4,27 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
-    <title>Shinko Chatbot</title>
+    <title>Weather Update</title>
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
 </head>
-<header class="aihead">
-    <h1>Shinko ai</h1>
-    <a href="/wthr" class="linka">Weather App</a>
+<header class="wthrhead">
+    <h1>Weather App</h1>
+    <a href="/" class="linkw">Shinko Ai</a>
 </header>
 
-<body class="ai">
+<body class="wthr">
+    <div class="blur"></div>
     <form method="POST">
-        <input class="textbox" type="text" name="city" placeholder="Enter city name" autocomplete="off">
+        <input class="textbox" type="text" name="city" placeholder="Enter city name">
         <button class="btn" type="submit">✧Send</button>
     </form>
 
-    {% if chat %}
+    {% if data %}
     <div class="temp">
-        {{ chat|safe }}
+        {{ data|safe }}
     </div>
     {% endif %}
 
-    <div class="time" id="timeai">
+    <div class="time" id="timewthr">
         {% if time %}
         <p>
             {{ time }}
@@ -32,7 +33,7 @@
         {% endif %}
     </div>
 
-    <div class="date" id="dateai">
+    <div class="date" id="datewthr">
         {% if date %}
         <p>
             {{ date }}
