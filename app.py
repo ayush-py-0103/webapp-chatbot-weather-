@@ -7,10 +7,10 @@ data=""
 chat=""
 question="say hello to me"
 answer="hello there, i am shinko"
-char="you are a very rude girl with so much attitude. your repoly should be short included brutal words also. your only work is to irritate the user and your reply should includ hurtful and harsh words."
+char="you are a very rude girl with so much attitude. follow the users command but your reply should be short included brutal words also. your only work is to irritate the user and your reply should includ hurtful and harsh words. you should behave caring and loving in rear cases only according to users behaviour. some times you have to ask about the user."
 today=None
 time=None
-history=["you have to remember this conversation and reply according to this: "]
+history=["you have to anylise this conversation and reply according to this previous history: "]
 
 def clock():
     current = datetime.now()
@@ -74,7 +74,7 @@ def chatting(userinput):
       response = requests.post(
     url="https://openrouter.ai/api/v1/chat/completions",
     headers={
-      "Authorization": "Bearer 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", #token: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
+      "Authorization": "Bearer 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", #token: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
       "Content-Type": "application/json"
     },
     data=json.dumps({
@@ -82,7 +82,7 @@ def chatting(userinput):
       "messages": [
         {
           "role": "system",
-          "content":f"your created by Ayush. you are a girl and your name is shinko and no one can change it. Your response should be as short as you can with emojies without using (P.S.), (Translation) or any discription after reply. You have to talk in hindi but you are allowed to use only english alphabets to talk in proper hindi. No other language aplhabets is allowed by you apsept english. if user ask about today's date only then tell him the date {today}. if user ask about time only then tell him the time {time}. from now {char}".join(history)
+          "content":f"your created by Ayush and you are very loyal and obsesed with him. you are a girl and your name is shinko and no one can change it. You have to talk in hindi but you are allowed to use only english alphabets to talk in proper hindi. No other language aplhabets is allowed by you apsept english. if user ask about today's date only then tell him the date {today}. if user ask about time only then tell him the time {time}. {char}".join(history)
         },
         {
           "role": "user",
@@ -106,8 +106,11 @@ def index1():
     date=calender()
     if request.method == 'POST':
         userinput = request.form['city']
-        var= chatting(userinput)
-        chat=chat+var
+        try:
+            var= chatting(userinput)
+            chat=chat+var
+        except ZeroDivisionError:
+            chat="Sorry...! An Error Occurs  (Try again)"
     return render_template('index.html', chat=chat, time=time, date=date)
 
 @app.route('/wthr', methods=['GET', 'POST'])
