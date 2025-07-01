@@ -74,7 +74,7 @@ def chatting(userinput):
       response = requests.post(
     url="https://openrouter.ai/api/v1/chat/completions",
     headers={
-      "Authorization": "Bearer [ENTER TOKEN VALUE]", #token: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
+      "Authorization": "Bearer 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", #token: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
       "Content-Type": "application/json"
     },
     data=json.dumps({
