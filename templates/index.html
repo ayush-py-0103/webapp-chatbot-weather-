@@ -52,8 +52,14 @@
             });
     }
 
-    setInterval(updateDateTime, 5000); // har 5 sec mein update hoga
-    updateDateTime(); // page load ke sath bhi ek baar call
+    setInterval(updateDateTime, 5000); 
+    updateDateTime();
+    window.onload = function () {
+    var tempDiv = document.getElementsByClassName("temp")[0];
+    if (tempDiv) {
+        tempDiv.scrollTop = tempDiv.scrollHeight;
+    }
+  };
 </script>
 
 </html>
