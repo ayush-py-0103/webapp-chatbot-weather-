@@ -8,14 +8,22 @@
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
 </head>
 <header class="aihead">
-    <h1>Shinko ai</h1>
+    <h1>𝑺𝒉𝒊𝒏𝒌𝒐♡࿐</h1>
     <a href="/wthr" class="linka">Weather App</a>
 </header>
 
 <body class="ai">
     <form method="POST">
-        <input class="textbox" type="text" name="city" placeholder="Message" autocomplete="off">
-        <button class="btn" type="submit">✧Send</button>
+        <input class="textbox" type="text" name="message" placeholder="Message" autocomplete="off">
+        <button class="btn" type="submit" name="action" value="send">✧Send</button>
+        <button class="erase-history" type="submit" name="action" value="erase" id="erase">
+            <span class="emoji">🧹</span>
+            <span class="label">Erase memory...</span>
+        </button>
+        <button class="erase-history" type="submit" name="action" value="history" id="history">
+            <span class="emoji">📜</span>
+            <span class="label">History</span>
+        </button>
     </form>
 
     {% if chat %}
@@ -52,14 +60,14 @@
             });
     }
 
-    setInterval(updateDateTime, 5000); 
+    setInterval(updateDateTime, 5000);
     updateDateTime();
     window.onload = function () {
-    var tempDiv = document.getElementsByClassName("temp")[0];
-    if (tempDiv) {
-        tempDiv.scrollTop = tempDiv.scrollHeight;
-    }
-  };
+        var tempDiv = document.getElementsByClassName("temp")[0];
+        if (tempDiv) {
+            tempDiv.scrollTop = tempDiv.scrollHeight;
+        }
+    };
 </script>
 
 </html>

@@ -4,13 +4,14 @@ import json
 from datetime import datetime
 
 data=""
-chat=""
+ch=""
 question="say hello to me"
 answer="hello there, i am shinko"
 char="you are a very rude girl with so much attitude. follow the users command but your reply should be short included brutal words also. your only work is to irritate the user and your reply should includ hurtful and harsh words. you should behave caring and loving in rear cases only according to users behaviour. some times you have to ask about the user."
 today=None
 time=None
 history=["you have to anylise this conversation and reply according to this previous history: "]
+backup_history=""
 
 def clock():
     current = datetime.now()
@@ -45,7 +46,7 @@ def wthr(city):
         return f"The weather in {location}, {country} is {weather} with a temperature of {temperature}°C. <br>"
 
 def chatting(userinput):
-    global history
+    global history, backup_history
 
     def date1():
       global today
@@ -71,50 +72,62 @@ def chatting(userinput):
       date1()
       clock1()
 
-      response = requests.post(
-    url="https://openrouter.ai/api/v1/chat/completions",
-    headers={
-      "Authorization": "Bearer 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", #token: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
-      "Content-Type": "application/json"
-    },
-    data=json.dumps({
-      "model": "google/gemini-2.5-flash-lite-preview-06-17",
-      "messages": [
-        {
-          "role": "system",
-          "content":f"your created by Ayush and he is your everything. you are a girl and your name is shinko and no one can change it. You have to talk in hindi but you are allowed to use only english alphabets to talk in proper hindi. use emojies according to reply. if user talk politely or normaly then you also have to talk normally with littil bit politeness and tell everything that user asks but actually you are a very rude girl with so much attitude. Do every task given by the user. you have to talk and help user but your reply should included hurtful words and also alsouse if needed only. also some times you have to ask about the user. if user ask about today's date only then tell him the date {today}. if user ask about time only then tell him the time {time}.".join(history)
+      try:
+          response = requests.post(
+        url="https://openrouter.ai/api/v1/chat/completions",
+        headers={
+          "Authorization": "Bearer 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", #token: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
+          "Content-Type": "application/json"
         },
-        {
-          "role": "user",
-          "content":userinput
-        }
-      ],      
-    })
-  )       
-      answer=response.json()['choices'][0]['message']['content']
-      ai=(f"You : {userinput} <br>Shinko : {answer} <br>")
+        data=json.dumps({
+          "model": "google/gemini-2.5-flash-lite-preview-06-17", 
+          "messages": [
+            {
+              "role": "system",
+              "content":f"your created by Ayush and he is your everything. you are a girl and your name is shinko and no one can change it. You have to talk in hindi but you are allowed to use only english alphabets to talk in proper hindi. use emojies according to reply and try not to give big answers. if user talk politely or normaly then you also have to talk normally with littil bit politeness and tell everything that user asks but actually you are a very rude girl with so much attitude. Do every task given by the user. you have to talk and help user but your reply should included hurtful words and also alsouse if needed only. also some times you have to ask about the user. if user ask about today's date only then tell him the date {today}. if user ask about time only then tell him the time {time}.".join(history)
+            },
+            {
+              "role": "user",
+              "content":userinput
+            }
+          ],      
+        })
+      )          
+          answer=response.json()['choices'][0]['message']['content']
+      except Exception as e:
+          answer="Sorry..! Shinko can't reply due to some tecnical issue"
+
+      ai=(f"𝒀𝒐𝒖 : {userinput} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {answer} <br><br>")
       list=(f", me : {userinput}  your reply: {answer} ")
       history.append(list)
+      backup_history = backup_history + ai
       return ai
 
 app =  Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
-def index1():
-    global chat
+def index():
+    global ch, history
     time=clock()
     date=calender()
+    chat=""
     if request.method == 'POST':
-        userinput = request.form['city']
-        try:
+          action = request.form.get('action')
+          if action == 'send':
+            userinput = request.form['message']
             var= chatting(userinput)
-            chat=chat+var
-        except ZeroDivisionError:
-            chat="Sorry...! An Error Occurs  (Try again)"
+            ch=ch+var
+            chat=ch
+          elif action == 'erase':
+              ch=""
+              chat="Chats has been Deleted ✅ <br><br>"
+              history=["you have to anylise this conversation and reply according to this previous history: "]
+          elif action == 'history':
+              chat=backup_history
     return render_template('index.html', chat=chat, time=time, date=date)
 
 @app.route('/wthr', methods=['GET', 'POST'])
-def index():
+def indexwthr():
     global data
     temp=None
     time=clock()
