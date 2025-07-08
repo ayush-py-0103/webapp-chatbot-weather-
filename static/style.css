@@ -300,7 +300,44 @@ header {
   font-size: 0.8em;
 }
 
+.speak {
+  position: absolute;
+  top: 25%;
+  right: 3%;
+  height: 50px;
+  width: 50px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(6px);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+  font-size: 22px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.speak:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #0affef;
+  box-shadow: 0 0 12px #0affef;
+  transform: scale(1.1);
+}
+
+.speak:active {
+  transform: scale(0.9);
+  box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.4);
+}
+
 @media screen and (max-width: 770px) {
+  .speak {
+    top: 18%;
+    right: 5%;
+    width: 10vw;
+    height: 10vw;
+    font-size: 5vw;
+  }
+
   .textbox {
     width: 74%;
     right: 24%;
@@ -350,6 +387,7 @@ header {
   .temp {
     top: 19vh;
     max-height: 60vh;
+    max-width: 80%;
   }
 
   header {
