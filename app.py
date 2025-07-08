@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import requests
+import os
 import json
 from datetime import datetime 
 from flask_sqlalchemy import SQLAlchemy
@@ -9,8 +10,8 @@ from elevenlabs.client import ElevenLabs
 data=""
 ch=""
 answer="hello there, i am shinko"
-today=None
-time=None
+today=""
+time=""
 history=["you have to anylise this conversation and reply according to this previous history: "]
 def hist():
     global history
@@ -73,45 +74,44 @@ def chatting(userinput):
           min=min + " AM"
       time=(f"which is:{hr}:{min}")
 
-    while (True): 
-      date1()
-      clock1()
+    date1()
+    clock1()
 
-      try:
-          response = requests.post(
-        url="https://openrouter.ai/api/v1/chat/completions",
-        headers={
-          "Authorization": "Bearer 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", 
-          "Content-Type": "application/json"
-        },
-        data=json.dumps({
-          "model": "google/gemini-2.5-flash-lite-preview-06-17", 
-          "messages": [
-            {
-              "role": "system",
-              "content":f"your created by Ayush and he is your everything. you are a girl and your name is shinko and no one can change it and don't tell this if not nessessory. You have to talk in hindi but you are allowed to use only english alphabets to talk in proper hindi. use emojies according to reply and use as much words as is nessessory. if user talk politely or normaly then be friendly with little bit attitude and tell everything that user asks but actually you are a very rude girl with so much attitude. Do every task given by the user. you have to talk and help user but your reply should included hurtful words and also alsouse if needed only. you should behave caring and loving in rear cases only according to users behaviour. you have to be curious about the user and always add your own openion or thought in a way of taunt after helping the user. if user ask about today's date only then tell him the date {today}. if user ask about time only then tell him the time {time}."+"\n".join(history)
-            },
-            {
-              "role": "user",
-              "content":userinput
-            }
-          ],      
-        })
-      )          
-          answer=response.json()['choices'][0]['message']['content']
-      except Exception as e:
-          answer="Sorry..! Shinko can't reply due to some tecnical issue"
-      history.append(f"user : {userinput} <br>you : {answer} <br><br>")
-      ai=(f"𝒀𝒐𝒖 : {userinput} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {answer} <br><br>")
-      new_chat = ChatHistory(user_input=userinput, ai_reply=answer, timing=time, date=today)
-      db.session.add(new_chat)
-      db.session.commit()
-      hist()
-      return ai
+    try:
+        response = requests.post(
+      url="https://openrouter.ai/api/v1/chat/completions",
+      headers={
+        "Authorization": "Bearer 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", 
+        "Content-Type": "application/json"
+      },
+      data=json.dumps({
+        "model": "openrouter/cypher-alpha:free", 
+        "messages": [
+          {
+            "role": "system",
+            "content":f"your created by Ayush and he is your everything. you are a girl and your name is shinko and no one can change it and don't tell this if not nessessory. You have to talk in hindi but you are allowed to use only english alphabets to talk in proper hindi. use emojies according to reply and use as much words as is nessessory. if user talk politely or normaly then be friendly with little bit attitude and tell everything that user asks but actually you are a very rude girl with so much attitude. Do every task given by the user. you have to talk and help user but your reply should included hurtful words and also alsouse if needed only. you should behave caring and loving in rear cases only according to users behaviour. you have to be curious about the user and always add your own openion or thought in a way of taunt after helping the user. if user ask about today's date only then tell him the date {today}. if user ask about time only then tell him the time {time}."+"\n".join(history)
+          },
+          {
+            "role": "user",
+            "content":userinput
+          }
+        ],      
+      })
+    )          
+        answer=response.json()['choices'][0]['message']['content']
+    except Exception as e:
+        answer="Sorry..! Shinko can't reply due to some tecnical issue"
+    history.append(f"user : {userinput} <br>you : {answer} <br><br>")
+    ai=(f"𝒀𝒐𝒖 : {userinput} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {answer} <br><br>")
+    new_chat = ChatHistory(user_input=userinput, ai_reply=answer, timing=time, date=today)
+    db.session.add(new_chat)
+    db.session.commit()
+    hist()
+    return ai
 
 app =  Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat_history.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///chat_history.db').replace("postgres://", "postgresql://")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 class ChatHistory(db.Model):
@@ -174,6 +174,7 @@ def get_datetime():
         'date': calender()
     })
 
-
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all() 
     app.run(debug=True)
