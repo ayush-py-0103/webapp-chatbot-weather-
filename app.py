@@ -38,7 +38,7 @@ def calender():
     return f"{day}, {months[mon-1]}, {year}" 
 
 def wthr(city):
-    link = f"USE YOUR WEATHER API{city}"
+    link = f"https://api.weatherapi.com/v1/current.json?key=52f08ebd7ef54de584e24528252303&q={city}"
     response = requests.get(link)
     data = response.json()
     if "error" in data:
@@ -81,7 +81,7 @@ def chatting(userinput):
           response = requests.post(
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={
-          "Authorization": "Bearer USE YOUR OPENROUTER TOKEN", 
+          "Authorization": "Bearer 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", 
           "Content-Type": "application/json"
         },
         data=json.dumps({
@@ -111,7 +111,6 @@ def chatting(userinput):
 
 app =  Flask(__name__)
 
-#CREATE YOUR SQLALCHEMY DATABASE
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat_history.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -146,7 +145,7 @@ def index():
                   chat += f"𝒀𝒐𝒖 : {msg.user_input} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {msg.ai_reply} <br><br>"
           elif action == 'speak':
               elevenlabs = ElevenLabs(
-                  api_key='USE YOUR ELEVENLABS TOKEN'
+                  api_key='sk_4cfe2406d357fdf08252006cf39681bb6fd0d15b21f62196'
               )
               audio_stream = elevenlabs.text_to_speech.stream(
                   text=answer,
