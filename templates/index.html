@@ -33,6 +33,13 @@
     </div>
     {% endif %}
 
+    {% if play_audio %}
+    <audio controls autoplay class="audio">
+        <source src="{{ url_for('static', filename='output.mp3') }}?v={{ random_id }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    {% endif %}
+
     <div class="time" id="timeai">
         {% if time %}
         <p>

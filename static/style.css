@@ -329,6 +329,37 @@ header {
   box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.4);
 }
 
+.audio {
+  position: absolute;
+  bottom: 130px;  
+  right: 2vw;
+  width: 300px;
+  height: 40px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.5),
+              0 0 20px rgba(0, 255, 204, 0.3);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.audio:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #0affef, 0 0 40px rgba(0, 255, 204, 0.4);
+}
+
+.audio::before {
+  content: "🔊 AI Voice";
+  position: absolute;
+  top: -25px;
+  left: 0;
+  color: #0affef;
+  font-size: 14px;
+  font-family: monospace;
+}
+
 @media screen and (max-width: 770px) {
   .speak {
     top: 18%;
@@ -366,6 +397,12 @@ header {
   .erase-history {
     top: calc(19vh - 40px);
     font-size: 12px;
+  }
+
+  .audio{
+    bottom: 10vh;
+    left: 1vh;
+    width: 250px;
   }
 
   #erase {

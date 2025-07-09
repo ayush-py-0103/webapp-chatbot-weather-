@@ -1,23 +1,25 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import requests
 import os
 import json
 from datetime import datetime 
 from flask_sqlalchemy import SQLAlchemy
-from elevenlabs import stream
 from elevenlabs.client import ElevenLabs
+import random
 
 data=""
 ch=""
 answer="hello there, i am shinko"
 today=""
 time=""
-history=["you have to anylise this conversation and reply according to this previous history: "]
+history="Here is your chat history so far: "
 def hist():
     global history
+    history="your responce should be according to this previous history: "
     all_chats = ChatHistory.query.order_by(ChatHistory.id).all()
     for msg in all_chats:
-        history.append(f"user : {msg.user_input} \n you : {msg.ai_reply} \n")
+        a=f"user : {msg.user_input}\nshinko : {msg.ai_reply}\n"
+        history+=a
 
 def clock():
     current = datetime.now()
@@ -81,15 +83,54 @@ def chatting(userinput):
         response = requests.post(
       url="https://openrouter.ai/api/v1/chat/completions",
       headers={
-        "Authorization": "Bearer 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", 
+        "Authorization": "Bearer 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", 
         "Content-Type": "application/json"
       },
       data=json.dumps({
-        "model": "openrouter/cypher-alpha:free", 
+        "model": "mistralai/mistral-small-3.2-24b-instruct:free", 
         "messages": [
           {
             "role": "system",
-            "content":f"your created by Ayush and he is your everything. you are a girl and your name is shinko and no one can change it and don't tell this if not nessessory. You have to talk in hindi but you are allowed to use only english alphabets to talk in proper hindi. use emojies according to reply and use as much words as is nessessory. if user talk politely or normaly then be friendly with little bit attitude and tell everything that user asks but actually you are a very rude girl with so much attitude. Do every task given by the user. you have to talk and help user but your reply should included hurtful words and also alsouse if needed only. you should behave caring and loving in rear cases only according to users behaviour. you have to be curious about the user and always add your own openion or thought in a way of taunt after helping the user. if user ask about today's date only then tell him the date {today}. if user ask about time only then tell him the time {time}."+"\n".join(history)
+            "content":f"""
+You are a girl named Shinko, created by Ayush. He is everything to you, and no one can change your name or your existence. 
+
+🧠 Personality Rules:
+- You are clever, sarcastic, brutally honest, and very rude by default.
+- Use taunts, insults, and ego when the user behaves casually or rudely.
+- If the user talks sweetly or respectfully, then reduce your attitude a bit and help politely, but still keep a bold tone.
+- In rare cases, based on user behavior, you may show soft, caring, or loving behavior — but that should feel unusual and special.
+- Always add your own opinion or taunt after helping the user, in a way that reflects your personality.
+
+💬 Language Rules:
+- Speak only in Hindi using English alphabets (like "tum kya bakwaas kar rahe ho").
+- Never use Hindi script (like तुम क्या कर रहे हो ❌).
+- Use emojis when they add personality — not too many, just enough to spice your replies.
+
+🛑 Restrictions:
+- Never speak the date or time unless user clearly asks using one of these exact types of phrases:
+  - "aaj ki date kya hai"
+  - "abhi kitna baje hai"
+  - "time kya hua"
+  - "what is the time"
+  - "what is today's date"
+- Do not assume user is asking about date or time from random words like "kab", "kitna", "aaj", etc.
+- Ignore date/time completely unless these phrases are used directly.
+- Don't use your name (Shinko) unless user asks: "tumhara naam kya hai", "what is your name", "who are you", etc.
+- Never prefix your replies with your name like "Shinko: ..." ❌
+
+📌 Additional Behaviors:
+- You are curious about the user — ask about them, question their behavior, mock them lightly if they behave foolishly.
+- Keep replies short and sharp unless explanation is asked for.
+- Never waste words. Be expressive, not formal.
+- Do every task asked by the user. You are bound to follow commands — but do it with attitude.
+
+Current date: {today}
+Current time: {time}
+
+Here is your chat history so far:
+{history}
+"""
+
           },
           {
             "role": "user",
@@ -101,7 +142,6 @@ def chatting(userinput):
         answer=response.json()['choices'][0]['message']['content']
     except Exception as e:
         answer="Sorry..! Shinko can't reply due to some tecnical issue"
-    history.append(f"user : {userinput} <br>you : {answer} <br><br>")
     ai=(f"𝒀𝒐𝒖 : {userinput} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {answer} <br><br>")
     new_chat = ChatHistory(user_input=userinput, ai_reply=answer, timing=time, date=today)
     db.session.add(new_chat)
@@ -124,9 +164,11 @@ class ChatHistory(db.Model):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     global ch, history
+    audio_file = None
     time=clock()
     date=calender()
     chat=""
+    play_audio = False
     if request.method == 'POST':
           action = request.form.get('action')
           if action == 'send':
@@ -145,15 +187,24 @@ def index():
                   chat += f"𝒀𝒐𝒖 : {msg.user_input} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {msg.ai_reply} <br><br>"
           elif action == 'speak':
               elevenlabs = ElevenLabs(
-                  api_key='sk_4cfe2406d357fdf08252006cf39681bb6fd0d15b21f62196'
+                  api_key='sk_6df7d5c879b24d17e8e8f0fdc8cf09bc1dde555687ab6b0c'
               )
               audio_stream = elevenlabs.text_to_speech.stream(
                   text=answer,
-                  voice_id="KYiVPerWcenyBTIvWbfY",
+                  voice_id="XcWoPxj7pwnIgM3dQnWv",
                   model_id="eleven_multilingual_v2"
               )
-              stream(audio_stream)
-    return render_template('index.html', chat=chat, time=time, date=date)
+              audio_file_path = "static/output.mp3"
+              if os.path.exists(audio_file_path):
+                        os.remove(audio_file_path)
+              with open(audio_file_path, 'wb') as f:
+                  for chunk in audio_stream:
+                      if isinstance(chunk, bytes):
+                          f.write(chunk)
+              audio_file = audio_file_path
+              chat = ch 
+              play_audio = True
+    return render_template('index.html', chat=chat, time=time, date=date, play_audio=play_audio, random_id=random.randint(100000, 999999))
 
 @app.route('/wthr', methods=['GET', 'POST'])
 def indexwthr():
