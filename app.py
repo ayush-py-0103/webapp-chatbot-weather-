@@ -87,7 +87,7 @@ def chatting(userinput):
         "Content-Type": "application/json"
       },
       data=json.dumps({
-        "model": "mistralai/mistral-small-3.2-24b-instruct:free", 
+        "model": "google/gemini-2.5-flash-lite-preview-06-17", 
         "messages": [
           {
             "role": "system",
