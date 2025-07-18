@@ -41,7 +41,7 @@ def calender():
     return f"{day}, {months[mon-1]}, {year}" 
 
 def wthr(city):
-    link = f"https://api.weatherapi.com/v1/current.json?key=52f08ebd7ef54de584e24528252303&q={city}"
+    link = f"WEATHER API"
     response = requests.get(link)
     data = response.json()
     if "error" in data:
@@ -83,7 +83,7 @@ def chatting(userinput):
         response = requests.post(
       url="https://openrouter.ai/api/v1/chat/completions",
       headers={
-        "Authorization": "Bearer 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", 
+        "Authorization": "OPENROUGHTER API", 
         "Content-Type": "application/json"
       },
       data=json.dumps({
@@ -187,7 +187,7 @@ def index():
                   chat += f"𝒀𝒐𝒖 : {msg.user_input} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {msg.ai_reply} <br><br>"
           elif action == 'speak':
               elevenlabs = ElevenLabs(
-                  api_key='sk_6df7d5c879b24d17e8e8f0fdc8cf09bc1dde555687ab6b0c'
+                  api_key='ELEVENLABS API'
               )
               audio_stream = elevenlabs.text_to_speech.stream(
                   text=answer,
