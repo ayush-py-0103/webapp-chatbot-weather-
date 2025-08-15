@@ -201,7 +201,6 @@ def index():
                   for chunk in audio_stream:
                       if isinstance(chunk, bytes):
                           f.write(chunk)
-              audio_file = audio_file_path
               chat = ch 
               play_audio = True
     return render_template('index.html', chat=chat, time=time, date=date, play_audio=play_audio, random_id=random.randint(100000, 999999))
