@@ -84,7 +84,7 @@ def chatting(userinput):
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents="Hello, kesa ho tum?",
+            contents=userinput,
             config=genai.types.GenerateContentConfig(
                 system_instruction=f"""
         You are a girl named Shinko, created by Ayush. He is everything to you, and no one can change your name or your existence. 
