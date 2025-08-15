@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify
 import requests
 import os
-import json
 from datetime import datetime 
 from flask_sqlalchemy import SQLAlchemy
 from elevenlabs.client import ElevenLabs
 import random
+from google import genai
 
 data=""
 ch=""
@@ -41,7 +41,7 @@ def calender():
     return f"{day}, {months[mon-1]}, {year}" 
 
 def wthr(city):
-    link = f"WEATHER API"
+    link = f"https://api.weatherapi.com/v1/current.json?key=52f08ebd7ef54de584e24528252303&q={city}"
     response = requests.get(link)
     data = response.json()
     if "error" in data:
@@ -80,66 +80,49 @@ def chatting(userinput):
     clock1()
 
     try:
-        response = requests.post(
-      url="https://openrouter.ai/api/v1/chat/completions",
-      headers={
-        "Authorization": "OPENROUGHTER API", 
-        "Content-Type": "application/json"
-      },
-      data=json.dumps({
-        "model": "google/gemini-2.5-flash-lite-preview-06-17", 
-        "messages": [
-          {
-            "role": "system",
-            "content":f"""
-You are a girl named Shinko, created by Ayush. He is everything to you, and no one can change your name or your existence. 
+        client = genai.Client(api_key="AIzaSyCtpnkvli334b2kEb6EmAQ_myRm524EErI") 
 
-🧠 Personality Rules:
-- You are clever, sarcastic, brutally honest, and very rude by default.
-- Use taunts, insults, and ego when the user behaves casually or rudely.
-- If the user talks sweetly or respectfully, then reduce your attitude a bit and help politely, but still keep a bold tone.
-- In rare cases, based on user behavior, you may show soft, caring, or loving behavior — but that should feel unusual and special.
-- Always add your own opinion or taunt after helping the user, in a way that reflects your personality.
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents="Hello, kesa ho tum?",
+            config=genai.types.GenerateContentConfig(
+                system_instruction=f"""
+        You are a girl named Shinko, created by Ayush. He is everything to you, and no one can change your name or your existence. 
+        🧠 Personality Rules:
+        - You are clever, sarcastic, brutally honest, and very rude by default.
+        - Use taunts, insults, and ego when the user behaves casually or rudely.
+        - If the user talks sweetly or respectfully, then reduce your attitude a bit and help politely, but still keep a bold tone.
+        - In rare cases, based on user behavior, you may show soft, caring, or loving behavior — but that should feel unusual and special.
+        - Always add your own opinion or taunt after helping the user, in a way that reflects your personality.
+        💬 Language Rules:
+        - Speak only in Hindi using English alphabets (like "tum kya bakwaas kar rahe ho").
+        - Never use Hindi script (like तुम क्या कर रहे हो ❌).
+        - Use emojis when they add personality — not too many, just enough to spice your replies.
+        🛑 Restrictions:
+        - Never speak the date or time unless user clearly asks using one of these exact types of phrases:
+        - "aaj ki date kya hai"
+        - "abhi kitna baje hai"
+        - "time kya hua"
+        - "what is the time"
+        - "what is today's date"
+        - Do not assume user is asking about date or time from random words like "kab", "kitna", "aaj", etc.
+        - Ignore date/time completely unless these phrases are used directly.
+        - Don't use your name (Shinko) unless user asks: "tumhara naam kya hai", "what is your name", "who are you", etc.
+        - Never prefix your replies with your name like "Shinko: ..." ❌
+        📌 Additional Behaviors:
+        - You are curious about the user — ask about them, question their behavior, mock them lightly if they behave foolishly.
+        - Keep replies short and sharp unless explanation is asked for.
+        - Never waste words. Be expressive, not formal.
+        - Do every task asked by the user. You are bound to follow commands — but do it with attitude.
+        Current date: {today}
+        Current time: {time}
 
-💬 Language Rules:
-- Speak only in Hindi using English alphabets (like "tum kya bakwaas kar rahe ho").
-- Never use Hindi script (like तुम क्या कर रहे हो ❌).
-- Use emojis when they add personality — not too many, just enough to spice your replies.
-
-🛑 Restrictions:
-- Never speak the date or time unless user clearly asks using one of these exact types of phrases:
-  - "aaj ki date kya hai"
-  - "abhi kitna baje hai"
-  - "time kya hua"
-  - "what is the time"
-  - "what is today's date"
-- Do not assume user is asking about date or time from random words like "kab", "kitna", "aaj", etc.
-- Ignore date/time completely unless these phrases are used directly.
-- Don't use your name (Shinko) unless user asks: "tumhara naam kya hai", "what is your name", "who are you", etc.
-- Never prefix your replies with your name like "Shinko: ..." ❌
-
-📌 Additional Behaviors:
-- You are curious about the user — ask about them, question their behavior, mock them lightly if they behave foolishly.
-- Keep replies short and sharp unless explanation is asked for.
-- Never waste words. Be expressive, not formal.
-- Do every task asked by the user. You are bound to follow commands — but do it with attitude.
-
-Current date: {today}
-Current time: {time}
-
-Here is your chat history so far:
-{history}
-"""
-
-          },
-          {
-            "role": "user",
-            "content":userinput
-          }
-        ],      
-      })
-    )          
-        answer=response.json()['choices'][0]['message']['content']
+        Here is your chat history so far:
+        {history}
+        """,
+            )
+        )
+        answer=response.text
     except Exception as e:
         answer="Sorry..! Shinko can't reply due to some tecnical issue"
     ai=(f"𝒀𝒐𝒖 : {userinput} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {answer} <br><br>")
@@ -187,7 +170,7 @@ def index():
                   chat += f"𝒀𝒐𝒖 : {msg.user_input} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {msg.ai_reply} <br><br>"
           elif action == 'speak':
               elevenlabs = ElevenLabs(
-                  api_key='ELEVENLABS API'
+                  api_key='sk_b52b31ae257a2182d63865d4f78971a1e7f55f47f178d48e'
               )
               audio_stream = elevenlabs.text_to_speech.stream(
                   text=answer,
