@@ -41,7 +41,7 @@ def calender():
     return f"{day}, {months[mon-1]}, {year}" 
 
 def wthr(city):
-    link = f"https://api.weatherapi.com/v1/current.json?key=52f08ebd7ef54de584e24528252303&q={city}"
+    link = f"AIP"
     response = requests.get(link)
     data = response.json()
     if "error" in data:
@@ -80,7 +80,7 @@ def chatting(userinput):
     clock1()
 
     try:
-        client = genai.Client(api_key="AIzaSyCtpnkvli334b2kEb6EmAQ_myRm524EErI") 
+        client = genai.Client(api_key="API") 
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
@@ -170,7 +170,7 @@ def index():
                   chat += f"𝒀𝒐𝒖 : {msg.user_input} <br>𝑺𝒉𝒊𝒏𝒌𝒐 : {msg.ai_reply} <br><br>"
           elif action == 'speak':
               elevenlabs = ElevenLabs(
-                  api_key='sk_b52b31ae257a2182d63865d4f78971a1e7f55f47f178d48e'
+                  api_key='API'
               )
               audio_stream = elevenlabs.text_to_speech.stream(
                   text=answer,
