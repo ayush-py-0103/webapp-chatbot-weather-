@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from elevenlabs.client import ElevenLabs
 import random
 from google import genai
+import os
 
 data=""
 ch=""
@@ -80,7 +81,7 @@ def chatting(userinput):
     clock1()
 
     try:
-        client = genai.Client(api_key="API") 
+        client = genai.Client(api_key=(os.getenv"API")) 
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
