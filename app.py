@@ -80,8 +80,7 @@ def chatting(userinput):
     clock1()
 
     try:
-        client = genai.Client(api_key="AIzaSyCtpnkvli334b2kEb6EmAQ_myRm524EErI") 
-
+        client = genai.Client(api_key="AIzaSyD2HAaTNTw_ZUS7M7oBZ0Ltm22qz7MIQhE") 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=userinput,
